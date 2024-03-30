@@ -1,49 +1,72 @@
-#![allow(non_snake_case)]
-
 use dioxus::prelude::*;
-use log::LevelFilter;
-use once_cell::sync::Lazy;
-use serde::{Deserialize, Serialize};
-#[path = "./router.rs"]
-mod router;
-use router::*;
-use surrealdb::engine::remote::ws::Client;
-use surrealdb::engine::remote::ws::Wss;
-use surrealdb::*;
+#[path = "./db.rs"]
+mod db;
+use db::*;
 
-#[derive(Debug, Serialize)]
-struct Movie<'a> {
-    title: &'a str,
-    year: i32,
+#[derive(Routable, Debug, Clone, PartialEq)]
+pub enum Route {
+    #[route("/")]
+    Home {},
+    #[route("/mylist")]
+    MyList {},
+    #[route("/blog")]
+    Blog {},
 }
-
-static DB: Lazy<Surreal<Client>> = Lazy::new(Surreal::init);
 
 fn main() {
     initDatabase();
-    // Init debug
-    dioxus_logger::init(LevelFilter::Info).expect("failed to init logger");
-    console_error_panic_hook::set_once();
-
     launch(App);
 }
 
+#[component]
 fn App() -> Element {
     rsx! {
         Router::<Route> {}
     }
 }
 
-async fn initDatabase() -> surrealdb::Result<()> {
-    DB.connect::<Wss>("localhost:8000").await?;
+#[component]
+fn Blog() -> Element {
+    rsx! {
+        NavBar{}
+        "Blog post"
+    }
+}
 
-    DB.use_ns("test").use_db("test").await?;
+#[component]
+fn MyList() -> Element {
+    rsx! {
+        NavBar{}
+        div {
+            h1 {
+                "MY LIST"
+            }
+            "imagine there's a fancy table view list here with options to sort by rating, site-wide rating, name, etc. it'll be really really cool promise :)"
+        }
+    }
+}
 
-    // DB.update(("movie", "Little Miss Sunshine"))
-    //     .content(Movie {
-    //         title: "Tobie",
-    //         year: 2006,
-    //     })
-    //     .await?;
-    Ok(())
+#[component]
+fn NavBar() -> Element {
+    rsx! {
+        div {
+            Link { to: Route::Home {}, button { "Go Home"} }
+            Link { to: Route::MyList {}, button { "Go to my list" } }
+            Link { to: Route::Blog {}, button {"Go to blog"} }
+        }
+    }
+}
+
+#[component]
+fn Home() -> Element {
+    let mut count = use_signal(|| 0);
+
+    rsx! {
+        NavBar {}
+        div {
+            h1 { "High-Five counter: {count}" }
+            button { onclick: move |_| count += 1, "Up high!" }
+            button { onclick: move |_| count -= 1, "Down low!" }
+        }
+    }
 }
