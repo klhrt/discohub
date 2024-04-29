@@ -1,17 +1,16 @@
-# Development
+# discohub
 
-1. Install npm: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
-2. Install the tailwind css cli: https://tailwindcss.com/docs/installation
-3. Run the following command in the root of the project to start the tailwind CSS compiler:
+A new Flutter project.
 
-```bash
-npx tailwindcss -i ./input.css -o ./public/tailwind.css --watch
-```
+## Getting Started
 
-Run the following command in the root of the project to start the Dioxus dev server:
+This project is a starting point for a Flutter application.
 
-```bash
-dx serve --hot-reload
-```
+A few resources to get you started if this is your first Flutter project:
 
-- Open the browser to http://localhost:8080
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
